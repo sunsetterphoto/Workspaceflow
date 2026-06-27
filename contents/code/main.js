@@ -3,8 +3,23 @@ const WSF_VERSION = "0.1.0";
 print("WSF: loaded v" + WSF_VERSION);
 
 // ── Konfiguration ────────────────────────────────────────────────────────────
-// wird in Task 6 aus Config befüllt
+// Fensterklassen, die keinen eigenen Space bekommen.
+// Wird via loadConfig() aus [Script-workspaceflow] in kwinrc befüllt.
+// readConfig("IgnoreClasses","") liefert einen kommagetrennten String,
+// z. B. "Xmessage,plasmashell" – oder einen leeren String wenn nicht gesetzt.
 var IGNORE_CLASSES = [];
+
+/**
+ * Liest die Konfiguration und befüllt IGNORE_CLASSES.
+ * Unterstützt komma- UND zeilenumbruch-getrennte Werte (robust gegen
+ * unterschiedliche Speicherformate von QPlainTextEdit vs. KConfigXT StringList).
+ */
+function loadConfig() {
+    var raw = readConfig("IgnoreClasses", "").toString();
+    IGNORE_CLASSES = raw.split(/[\n,]+/).map(function(s) { return s.trim(); }).filter(Boolean);
+    print("WSF: ignore=" + IGNORE_CLASSES.join("|"));
+}
+loadConfig();
 
 // ── State ────────────────────────────────────────────────────────────────────
 // Mapping: window -> VirtualDesktop (der für dieses Fenster erzeugte Space)
@@ -22,10 +37,15 @@ function logDesktopCount() {
 
 /**
  * Prüft, ob ein Fenster auf der Ignorier-Liste steht.
- * Task 6 befüllt IGNORE_CLASSES aus der Konfiguration.
+ * IGNORE_CLASSES wird via loadConfig() aus der Konfiguration befüllt.
  */
 function isIgnored(window) {
-    return IGNORE_CLASSES.indexOf((window.resourceClass || "").toString()) !== -1;
+    var cls = (window.resourceClass || "").toString();
+    if (IGNORE_CLASSES.indexOf(cls) !== -1) {
+        print("WSF: ignored " + cls);
+        return true;
+    }
+    return false;
 }
 
 /**
