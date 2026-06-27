@@ -71,21 +71,32 @@ Komma- oder zeilengetrennte Einträge sind möglich. KWin muss danach neu konfig
 qdbus6 org.kde.KWin /KWin reconfigure
 ```
 
-**Hinweis:** Eine Settings-Dialog-UI ist beigelegt (`contents/config/`), aber die Bindung des KDE-Einstellungsdialogs an die korrekte kwinrc-Sektion ist noch nicht abschließend verifiziert. Der direkte kwinrc-Weg oben ist der gesicherte.
+**Hinweis (Config-UI):** Eine Settings-Dialog-UI ist beigelegt (`contents/config/`), aber die Bindung des KDE-Einstellungsdialogs an die korrekte kwinrc-Sektion `[Script-workspaceflow]` ist noch nicht abschließend verifiziert. Um selbst zu prüfen: *System Settings → KWin Scripts → Workspaceflow → Configure* aufrufen, einen Wert eintragen, speichern, dann `kreadconfig6 --file kwinrc --group Script-workspaceflow --key IgnoreClasses` prüfen. Der direkte kwinrc-Weg oben ist in jedem Fall der gesicherte Pfad.
 
 ## Bekannte Grenzen
 
 **Multi-Monitor:** Virtuelle Desktops spannen in Plasma alle angeschlossenen Monitore. Ein per-Monitor-Space (wie bei macOS Spaces im „Displays have separate Spaces"-Modus) ist mit der KWin-API nicht realisierbar.
 
+**Bereits maximiert gestartete Fenster:** Fenster, die beim Start schon im maximierten Zustand erscheinen, feuern kein `maximizedChanged`-Signal und bekommen daher keinen eigenen Space. Einmal kurz wiederherstellen und erneut maximieren erzeugt den Space wie gewohnt. (Bewusste v0.1-Entscheidung — ein Startup-Scan wäre möglich, ist aber nicht implementiert.)
+
 ## Live-Aktivierung
 
-Tests laufen ausschließlich in einer nested KWin-Session. Erst nach erfolgreichem Abschluss aller Tests live aktivieren:
+Tests laufen ausschließlich in einer **isolierten** nested KWin-Session mit eigenem D-Bus und eigenem `XDG_CONFIG_HOME` (damit die Live-`~/.config/kwinrc` unberührt bleibt). Das Test-Harness in `test/` startet diese Session automatisch:
 
 ```bash
-# Nested Session für Tests starten:
-kwin_wayland --xwayland -- bash
+# Alle Tests in isolierter nested Session ausführen:
+./test/task-9-e2e.sh        # End-to-End-Vollszenario
+./test/invariant-desktop0.sh  # Desktop-0-Identitäts-Invariante
+```
 
-# Darin testen, dann im echten System aktivieren:
+Intern nutzt jedes Testskript das Muster:
+```bash
+dbus-run-session -- bash -c "kwin_wayland --virtual --xwayland ... &"
+```
+
+Nach erfolgreichem Abschluss aller Tests live aktivieren:
+
+```bash
 ./install.sh
 ```
 
@@ -93,7 +104,7 @@ kwin_wayland --xwayland -- bash
 
 - KDE Plasma 6.7 / KWin 6.7
 - Wayland
-- Keine Abhängigkeiten außer den KDE-Standardwerkzeugen (`kpackagetool6`, `kwriteconfig6`, `qdbus6`)
+- Keine Abhängigkeiten außer den KDE-Standardwerkzeugen (`kpackagetool6`, `kwriteconfig6`, `qdbus6` bzw. `qdbus-qt6` als Fallback)
 
 ## Lizenz
 
