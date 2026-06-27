@@ -13,7 +13,7 @@ SCRIPT_NAME="workspaceflow"
 echo "Workspaceflow: wird entfernt…"
 
 # ── 1. Skript in kwinrc deaktivieren ──────────────────────────────────────
-kwriteconfig6 --file kwinrc --group Plugins --key "${SCRIPT_NAME}Enabled" false
+kwriteconfig6 --file kwinrc --group Plugins --key "${SCRIPT_NAME}Enabled" false || true
 
 # ── 2. Paket entfernen ────────────────────────────────────────────────────
 # Zuerst über kpackagetool6 (offizieller Weg, Fehler toleriert):
