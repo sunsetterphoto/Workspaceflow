@@ -41,6 +41,10 @@ function createSpaceFor(window) {
     // anschließend via workspace.desktops[1] holen. (Bestätigt: API-NOTES.md)
     workspace.createDesktop(1, "WSF:" + (window.caption || "app"));
     var target = workspace.desktops[1];
+    if (!target) {
+        print("WSF: WARN createDesktop failed");
+        return;
+    }
 
     window.desktops = [target];
     spaceForWindow.set(window, target);
@@ -51,20 +55,46 @@ function createSpaceFor(window) {
 }
 
 /**
+ * Entfernt den für window erzeugten Space: Fenster zurück auf Desktop 0,
+ * Space-Desktop löschen, aktiven Desktop auf 0 zurücksetzen.
+ */
+function removeSpaceFor(window) {
+    var desk = spaceForWindow.get(window);
+    if (!desk) return;
+    spaceForWindow.delete(window);
+    // Fenster zurück auf permanenten Desktop 0
+    if (workspace.desktops[0]) window.desktops = [workspace.desktops[0]];
+    workspace.removeDesktop(desk);
+    if (workspace.desktops[0]) workspace.currentDesktop = workspace.desktops[0];
+    print("WSF: removed space");
+    logDesktopCount();
+}
+
+/**
  * Signal-Handler für window.maximizedChanged (kein Argument — Modus via
  * window.maximizeMode lesen). Wert 3 = MaximizeFull (H+V). (API-NOTES.md)
  */
 function onMaximizeChanged(window) {
-    if (window.maximizeMode === 3 && !isIgnored(window)) {
+    if (isIgnored(window)) return;
+    if (window.maximizeMode === 3) {
         createSpaceFor(window);
+    } else if (spaceForWindow.has(window)) {
+        removeSpaceFor(window);
     }
 }
+
+// Schließen löst ebenfalls den Space auf
+workspace.windowRemoved.connect(function(window) {
+    if (spaceForWindow.has(window)) removeSpaceFor(window);
+});
 
 /**
  * Verbindet ein Fenster mit dem maximizedChanged-Signal.
  * Wird für vorhandene und neu erscheinende Fenster aufgerufen.
+ * Überspringt interne KWin-Hilfsfenster (specialWindow, nicht maximizable).
  */
 function track(window) {
+    if (!window.maximizable || window.specialWindow) return;
     if (window.maximizedChanged &&
             typeof window.maximizedChanged.connect === "function") {
         window.maximizedChanged.connect(function() {
