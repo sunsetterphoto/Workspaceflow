@@ -1,57 +1,56 @@
 # Workspaceflow
 
-**macOS-artige dynamische Arbeitsflächen für KDE Plasma 6 (Wayland).**
+**macOS-style dynamic workspaces for KDE Plasma 6 (Wayland).**
 
-Maximiere ein Fenster — es wandert auf eine eigene, automatisch erzeugte
-Arbeitsfläche rechts neben deinem Desktop. Stelle es wiederher oder schließe es —
-die Arbeitsfläche verschwindet wieder. Wie „Spaces" auf dem Mac, nur für KWin.
+Maximize a window — it moves onto its own, automatically created workspace right
+next to your desktop. Restore or close it — that workspace disappears again.
+Just like "Spaces" on the Mac, but for KWin.
 
-Workspaceflow ist ein reines KWin-Skript: kein Daemon, keine Fremd­abhängigkeiten,
-kein `sudo`.
+Workspaceflow is a pure KWin script: no daemon, no third-party dependencies,
+no `sudo`.
 
 ---
 
-## Verhalten
+## Behavior
 
-- **Maximieren** eines Fensters → ein neuer virtueller Desktop entsteht direkt
-  rechts neben dem permanenten Desktop, das Fenster wandert dorthin, der Fokus
-  folgt. Reihenfolge: `Desktop │ neuestes │ … │ ältestes`.
-- **Wiederherstellen** (Maximierung aufheben) **oder Schließen** → die
-  Arbeitsfläche löst sich auf, das Fenster kehrt auf den permanenten Desktop
-  zurück, die übrigen rücken nach.
-- Der **permanente Desktop bleibt immer ganz links** und wird nie entfernt.
+- **Maximizing** a window → a new virtual desktop is created directly to the
+  right of the permanent desktop, the window moves there, and focus follows.
+  Order: `Desktop │ newest │ … │ oldest`.
+- **Restoring** (un-maximizing) **or closing** → the workspace dissolves, the
+  window returns to the permanent desktop, and the remaining workspaces shift
+  over.
+- The **permanent desktop always stays on the far left** and is never removed.
 
-Nicht-maximierte Fenster leben alle zusammen auf dem permanenten Desktop — wie
-gewohnt.
+Non-maximized windows all live together on the permanent desktop — as usual.
 
-## Gesten
+## Gestures
 
-| Geste (Touchpad) | Wirkung |
+| Gesture (touchpad) | Action |
 |---|---|
-| **3 Finger links/rechts** | Zwischen Desktop und Arbeitsflächen blättern |
-| **4 Finger hoch** | Übersicht aller Flächen öffnen (Overview) |
+| **3 fingers left/right** | Move between the desktop and workspaces |
+| **4 fingers up** | Open the overview of all workspaces |
 
-> **Warum 4 Finger für die Übersicht?** Die Fingeranzahl dieser Gesten ist in
-> KWin 6 **fest im Compositor verdrahtet** und nicht über die Konfiguration
-> änderbar: Desktop-Wechsel = 3 Finger horizontal, Overview = 4 Finger hoch.
-> Workspaceflow nutzt diese eingebauten Gesten unverändert (das ist auch nah an
-> macOS, wo viele System­gesten 4-Finger sind). `install.sh` stellt nur sicher,
-> dass der Overview-Effekt aktiv ist (`overviewEnabled=true`) — damit ist die
-> 4-Finger-Geste ohne weiteren Schritt nutzbar.
+> **Why 4 fingers for the overview?** The finger count of these gestures is
+> **hard-wired into the KWin 6 compositor** and cannot be changed via
+> configuration: switch desktops = 3 fingers horizontal, overview = 4 fingers
+> up. Workspaceflow uses these built-in gestures unchanged (which is also close
+> to macOS, where many system gestures are 4-finger). `install.sh` only makes
+> sure the overview effect is enabled (`overviewEnabled=true`), so the 4-finger
+> gesture works without any extra step.
 >
-> Eine Umlegung auf 3 Finger hoch wäre nur über einen externen Gesten-Daemon
-> (z. B. `libinput-gestures`) möglich und wurde bewusst nicht aufgenommen, um
-> Workspaceflow abhängigkeitsfrei und wartungsarm zu halten.
+> Remapping it to 3 fingers up would only be possible through an external
+> gesture daemon (e.g. `libinput-gestures`) and was deliberately left out to
+> keep Workspaceflow dependency-free and low-maintenance.
 
-Alternativ öffnet **`Meta`+`W`** die Übersicht per Tastatur.
+Alternatively, **`Meta`+`W`** opens the overview from the keyboard.
 
-## Voraussetzungen
+## Requirements
 
-- KDE Plasma 6 / KWin 6 auf **Wayland** (entwickelt und getestet auf 6.7)
-- KDE-Standardwerkzeuge: `kpackagetool6`, `kwriteconfig6`/`kreadconfig6`,
-  `qdbus6` (oder `qdbus-qt6` als Fallback)
+- KDE Plasma 6 / KWin 6 on **Wayland** (developed and tested on 6.7)
+- Standard KDE tools: `kpackagetool6`, `kwriteconfig6`/`kreadconfig6`,
+  `qdbus6` (or `qdbus-qt6` as a fallback)
 
-Keine weiteren Abhängigkeiten.
+No other dependencies.
 
 ## Installation
 
@@ -61,106 +60,103 @@ cd Workspaceflow
 ./install.sh
 ```
 
-Kein `sudo` nötig, idempotent (mehrfaches Ausführen ist sicher). `install.sh`:
+No `sudo` required, idempotent (safe to run repeatedly). `install.sh`:
 
-1. installiert das KWin-Skript-Paket nach `~/.local/share/kwin/scripts/workspaceflow`,
-2. aktiviert es in `~/.config/kwinrc` (`workspaceflowEnabled=true`),
-3. stellt den Overview-Effekt sicher (`overviewEnabled=true`),
-4. lädt die KWin-Konfiguration neu (sofort aktiv, kein Logout nötig),
-5. richtet den optionalen Auto-Update-Timer ein (s. u.).
+1. installs the KWin script package into `~/.local/share/kwin/scripts/workspaceflow`,
+2. enables it in `~/.config/kwinrc` (`workspaceflowEnabled=true`),
+3. ensures the overview effect is on (`overviewEnabled=true`),
+4. reloads the KWin configuration (active immediately, no logout needed),
+5. sets up the optional auto-update timer (see below).
 
-### Empfehlung: ein Basis-Desktop
+### Recommended: a single base desktop
 
-Den saubersten „macOS-Flow" bekommst du mit **einem** permanenten virtuellen
-Desktop — dann erzeugt jedes Maximieren genau eine Arbeitsfläche daneben.
-Einstellbar unter *Systemeinstellungen → Fensterverwaltung → Virtuelle
-Arbeitsflächen* (Anzahl auf 1). Mehrere feste Desktops funktionieren auch, die
-dynamischen Flächen mischen sich dann aber zwischen sie.
+You get the cleanest "macOS flow" with **one** permanent virtual desktop — then
+every maximize creates exactly one workspace next to it. Configure it under
+*System Settings → Window Management → Virtual Desktops* (set the count to 1).
+Multiple fixed desktops work too, but the dynamic workspaces then interleave
+between them.
 
-## Deinstallation
+## Uninstallation
 
 ```bash
 ./uninstall.sh
 ```
 
-Deaktiviert das Skript, entfernt das Paket und den Auto-Update-Timer. Deine
-übrigen KDE-Einstellungen bleiben unberührt.
+Disables the script and removes the package and the auto-update timer. Your other
+KDE settings are left untouched.
 
-## Konfiguration — Ignorier-Liste
+## Configuration — ignore list
 
-Fensterklassen, die **keine** eigene Arbeitsfläche bekommen sollen (z. B. Apps,
-die du lieber auf dem Hauptdesktop behältst), trägst du in `~/.config/kwinrc`
-ein:
+Window classes that should **not** get their own workspace (e.g. apps you'd
+rather keep on the main desktop) go into `~/.config/kwinrc`:
 
 ```ini
 [Script-workspaceflow]
 IgnoreClasses=firefox,Xmessage
 ```
 
-Komma- oder zeilengetrennt. Danach KWin neu konfigurieren:
+Comma- or newline-separated. Then reconfigure KWin:
 
 ```bash
-qdbus6 org.kde.KWin /KWin reconfigure   # oder qdbus-qt6
+qdbus6 org.kde.KWin /KWin reconfigure   # or qdbus-qt6
 ```
 
-Die Fensterklasse einer App findest du mit `qdbus6 org.kde.KWin /KWin
-queryWindowInfo` (anklicken) oder über `xprop WM_CLASS`.
+Find an app's window class with `qdbus6 org.kde.KWin /KWin queryWindowInfo`
+(then click the window) or via `xprop WM_CLASS`.
 
-> **Hinweis:** Eine grafische Settings-UI liegt bei (`contents/config/`), die
-> Bindung des KDE-Einstellungsdialogs an die korrekte kwinrc-Sektion ist aber
-> noch nicht abschließend verifiziert. Der direkte kwinrc-Weg oben ist der
-> gesicherte.
+> **Note:** A graphical settings UI is included (`contents/config/`), but the
+> binding of the KDE settings dialog to the correct kwinrc section is not yet
+> fully verified. The direct kwinrc method above is the reliable one.
 
-## Persistenz & Updates
+## Persistence & updates
 
-Workspaceflow lebt vollständig im Benutzerbereich
-(`~/.local/share/kwin/scripts/` und `~/.config/kwinrc`). **System- und
-Plasma-Updates überschreiben diese Dateien nicht.** Die genutzte 4-Finger-Geste
-ist KWins eingebauter Standard und bleibt über Updates erhalten.
+Workspaceflow lives entirely in user space
+(`~/.local/share/kwin/scripts/` and `~/.config/kwinrc`). **System and Plasma
+updates do not overwrite these files.** The 4-finger gesture it relies on is
+KWin's built-in default and is preserved across updates.
 
-Sollte ein Update jemals den Overview-Effekt deaktivieren, stellt der nächste
-Lauf von `install.sh` (`overviewEnabled=true`) ihn wieder her — der
-Auto-Update-Timer macht das automatisch.
+Should an update ever disable the overview effect, the next run of `install.sh`
+(`overviewEnabled=true`) restores it — the auto-update timer does this
+automatically.
 
-## Auto-Update
+## Auto-update
 
-`install.sh` richtet einen systemd-**User**-Timer ein, der Workspaceflow
-selbst aktuell hält und die Einstellungen selbstheilend wieder anwendet:
+`install.sh` sets up a systemd **user** timer that keeps Workspaceflow current
+and re-applies its settings in a self-healing way:
 
-- **Zeitplan:** täglich (`OnCalendar=daily`, `Persistent=true`,
+- **Schedule:** daily (`OnCalendar=daily`, `Persistent=true`,
   `RandomizedDelaySec=1h`)
-- **Aktion:** `git pull --ff-only` im Projektverzeichnis, danach `install.sh`
-- **Voraussetzung:** Repo unter `~/Schreibtisch/PublicGitHub/Workspaceflow`
-  ausgecheckt (Pfad der systemd-Unit)
+- **Action:** `git pull --ff-only` in the project directory, then `install.sh`
+- **Requirement:** the repo checked out at
+  `~/Schreibtisch/PublicGitHub/Workspaceflow` (path baked into the systemd unit)
 
-Die Units werden nach `~/.config/systemd/user/` **kopiert** (kein Symlink —
-Fedora/SELinux-kompatibel). Abschalten jederzeit mit
+The units are **copied** into `~/.config/systemd/user/` (not symlinked — for
+Fedora/SELinux compatibility). Disable anytime with
 `systemctl --user disable --now workspaceflow-update.timer`.
 
-## Bekannte Grenzen
+## Known limitations
 
-- **Multi-Monitor:** Virtuelle Desktops spannen in Plasma alle Monitore; ein
-  per-Monitor-Space (wie macOS im „Displays have separate Spaces"-Modus) ist mit
-  der KWin-API nicht möglich.
-- **Bereits maximiert gestartete Fenster** feuern kein `maximizedChanged`-Signal
-  und bekommen keinen eigenen Space. Einmal wiederherstellen und neu maximieren
-  erzeugt ihn. (Bewusste v0.1-Entscheidung.)
+- **Multi-monitor:** Virtual desktops in Plasma span all monitors; a per-monitor
+  space (like macOS in "Displays have separate Spaces" mode) is not possible
+  with the KWin API.
+- **Windows that start maximized** don't fire a `maximizedChanged` signal and so
+  don't get their own workspace. Restore once and re-maximize to create it.
+  (Deliberate v0.1 decision.)
 
-## Entwicklung & Tests
+## Development & testing
 
-Die Tests laufen **ausschließlich in einer isolierten, verschachtelten
-KWin-Session** mit eigenem D-Bus und eigenem `XDG_CONFIG_HOME` — die laufende
-Live-Sitzung wird dabei nie berührt:
+Tests run **exclusively in an isolated, nested KWin session** with its own D-Bus
+and its own `XDG_CONFIG_HOME` — the running live session is never touched:
 
 ```bash
-./test/task-9-e2e.sh          # End-to-End-Vollszenario
-./test/invariant-desktop0.sh  # permanenter Desktop bleibt stabil
+./test/task-9-e2e.sh          # full end-to-end scenario
+./test/invariant-desktop0.sh  # permanent desktop stays stable
 ```
 
-Die Skripte starten KWin über
-`dbus-run-session -- kwin_wayland --virtual --xwayland …` und prüfen das
-Verhalten gegen das echte Skript-Log.
+The scripts launch KWin via
+`dbus-run-session -- kwin_wayland --virtual --xwayland …` and check the behavior
+against the real script log.
 
-## Lizenz
+## License
 
-MIT — siehe [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
