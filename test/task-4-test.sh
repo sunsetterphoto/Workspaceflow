@@ -116,23 +116,8 @@ workspace.windowAdded.connect(function(w) {
         w.setMaximize(true, true);
         print("WSF-PROBE: nach Maximize, maximizeMode=" + w.maximizeMode);
 
-        // Kurz warten dann wiederherstellen
-        workspace.windowAdded.connect(function() {}); // dummy um scope zu halten
-        var timer = 0;
-        function restoreWindow() {
-            timer++;
-            if (timer >= 2) {
-                print("WSF-PROBE: stelle wieder her: " + w.caption);
-                w.setMaximize(false, false);
-                print("WSF-PROBE: nach Restore, maximizeMode=" + w.maximizeMode);
-                print("WSF-PROBE: DONE");
-            } else {
-                workspace.windowActivated.connect(function() {});
-            }
-        }
-        // Direktes Restore nach kurzem Delay via windowActivated-Missbrauch nicht möglich.
-        // Wir nutzen einen einfachen synchronen Aufruf mit kurzem Zähler.
-        // Da KWin-JS single-threaded ist, muss das Restore via Signal verzögert werden.
+        // Restore via desktopsChanged: erst wenn Space existiert (cnt >= 2) ist
+        // sichergestellt, dass main.js die createSpaceFor-Logik abgeschlossen hat.
         w.desktopsChanged.connect(function() {
             print("WSF-PROBE: desktopsChanged gefeuert, desktops.length=" + workspace.desktops.length);
             if (workspace.desktops.length >= 2) {

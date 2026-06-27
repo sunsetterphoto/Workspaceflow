@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Task-6-Test: Konfigurierbare Ignorier-Liste
 #
-# TDD-Nachweis:
-#   RUN A (RED):   IgnoreClasses=Xmessage gesetzt, aber loadConfig() noch NICHT
-#                  implementiert → Space wird TROTZDEM erzeugt, kein "WSF: ignored …"
+# TDD-Nachweis (historisch; loadConfig() ist implementiert):
+#   RUN A (RED):   Reproduziert den Zustand VOR der Implementierung — loadConfig()
+#                  war noch nicht vorhanden → Space wurde TROTZDEM erzeugt, kein
+#                  "WSF: ignored …". Dieses Run schlägt heute IMMER FEHL, da
+#                  loadConfig() inzwischen implementiert ist. Überspringen via
+#                  --skip-red ist der normale Betriebsmodus.
 #   RUN B (GREEN): loadConfig() implementiert → Xmessage wird ignoriert,
 #                  kein Space erzeugt, desktop_count=1 bleibt.
 #   RUN C (Gegenprobe): IgnoreClasses leer → Space wird wie gewohnt erzeugt.
@@ -130,8 +133,8 @@ PROBE_EOF
 # ═══════════════════════════════════════════════════════════════════════════════
 if [ "$SKIP_RED" != "--skip-red" ]; then
     echo "════════════════════════════════"
-    echo "WSF-TEST: RUN A (RED) — loadConfig() nicht implementiert"
-    echo "WSF-TEST: Erwartet: FAIL für ignored/desktop_count-Assertions"
+    echo "WSF-TEST: RUN A (RED/historisch) — simuliert Zustand vor loadConfig()-Implementierung"
+    echo "WSF-TEST: Erwartet heute FAIL (loadConfig() ist implementiert — RED nur historischer TDD-Beleg)"
     echo "════════════════════════════════"
 
     LOG_A="$(mktemp /tmp/wsf-task6-runA-XXXXXX.log)"

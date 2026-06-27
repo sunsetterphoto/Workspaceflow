@@ -1,2 +1,6 @@
+# Temporäre isolierte KWin-Konfig-Verzeichnisse, die von Testskripten via mktemp
+# unter /tmp/ angelegt werden — diese Pfade werden NIE direkt im Repo verwendet.
+# Die Einträge sind inert (greifen nicht), dienen aber als Dokumentation, falls
+# jemand zukünftig test/datahome/ oder test/cfg/ als feste Testpfade einführt.
 test/datahome/
 test/cfg/
