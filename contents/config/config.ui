@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WorkspaceflowConfig</class>
+ <widget class="QWidget" name="WorkspaceflowConfig">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Workspaceflow-Einstellungen</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label_IgnoreClasses">
+     <property name="text">
+      <string>Fensterklassen ignorieren (eine pro Zeile):</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="kcfg_IgnoreClasses">
+     <property name="toolTip">
+      <string>Fensterklassen, die beim Maximieren keinen eigenen Space bekommen. Eine Klasse pro Zeile. Beispiel: Xmessage</string>
+     </property>
+     <property name="placeholderText">
+      <string>Eine Klasse pro Zeile, z. B.:
+Xmessage
+plasmashell</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
