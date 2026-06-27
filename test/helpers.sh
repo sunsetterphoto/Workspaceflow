@@ -10,7 +10,7 @@
 # Alle Funktionen geben 0 bei Erfolg, 1 bei Fehler zurück.
 # Ausgabe-Präfix: WSF-TEST PASS / WSF-TEST FAIL
 
-set -euo pipefail
+set -uo pipefail
 
 # ── Basisfunktionen ──────────────────────────────────────────────────────────
 
@@ -103,7 +103,7 @@ run_probe() {
             qdbus-qt6 org.kde.KWin /Scripting org.kde.kwin.Scripting.start > /dev/null
 
             # Probe laufen lassen
-            sleep 3
+            sleep $timeout_sek
 
             kill \$KWIN_PID 2>/dev/null || true
             wait \$KWIN_PID 2>/dev/null || true

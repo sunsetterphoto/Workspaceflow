@@ -35,8 +35,9 @@ if (cd !== undefined && cd !== null) {
 // ── 3. createDesktop / removeDesktop testen ─────────────────────────────────
 if (typeof workspace.createDesktop === "function") {
     try {
+        var beforeCount = workspace.desktops.length;
         var newDesktop = workspace.createDesktop(
-            workspace.desktops.length,
+            beforeCount,
             "WSF-TEST-DESKTOP"
         );
         print("WSF-PROBE: createDesktop(pos, name) -> type = " + typeof newDesktop);
@@ -45,9 +46,11 @@ if (typeof workspace.createDesktop === "function") {
             print("WSF-PROBE: newDesktop.id = " + newDesktop.id);
             print("WSF-PROBE: newDesktop.name = " + newDesktop.name);
         }
-        // removeDesktop direkt wieder aufräumen
-        if (typeof workspace.removeDesktop === "function" && newDesktop) {
-            workspace.removeDesktop(newDesktop);
+        // removeDesktop direkt wieder aufräumen – ohne newDesktop-Guard,
+        // da createDesktop in KWin 6.x undefined zurückgibt.
+        // Stattdessen über Listenlänge prüfen, ob tatsächlich ein Desktop angelegt wurde.
+        if (typeof workspace.removeDesktop === "function" && workspace.desktops.length > beforeCount) {
+            workspace.removeDesktop(workspace.desktops[workspace.desktops.length - 1]);
             print("WSF-PROBE: removeDesktop(desktop) OK");
             print("WSF-PROBE: desktops.length after remove = " + workspace.desktops.length);
         }
