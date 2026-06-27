@@ -1,0 +1,14 @@
+{
+  "KPlugin": {
+    "Id": "workspaceflow",
+    "Name": "Workspaceflow",
+    "Description": "macOS-artige dynamische Spaces: Maximieren erzeugt eine eigene Arbeitsfläche.",
+    "Authors": [{ "Name": "sunsetterphoto", "Email": "sunsetterphoto@gmail.com" }],
+    "Version": "0.1.0",
+    "License": "MIT",
+    "Category": "Window Management",
+    "EnabledByDefault": false
+  },
+  "X-Plasma-API": "javascript",
+  "X-Plasma-MainScript": "code/main.js"
+}
