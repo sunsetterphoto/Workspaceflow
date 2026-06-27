@@ -4,7 +4,6 @@
 #
 # Verwendung:
 #   ./test/nested-session.sh [SESSION-KOMMANDO...]
-#   WSF_W=1280 WSF_H=800 ./test/nested-session.sh sleep 5
 #
 # Die nested KWin-Instanz bekommt einen eigenen D-Bus-Session-Bus via
 # dbus-run-session, sodass org.kde.KWin auf diesem Bus registriert wird
@@ -16,14 +15,11 @@
 #   export QT_FORCE_STDERR_LOGGING=1
 set -euo pipefail
 
-W="${WSF_W:-1280}"
-H="${WSF_H:-800}"
-
 # KWin-Skript-print() -> Qt-Kategorie "js" -> sichtbar mit:
 export QT_LOGGING_RULES="${QT_LOGGING_RULES:-js.debug=true;js=true}"
 export QT_FORCE_STDERR_LOGGING=1
 
-echo "WSF-TEST: starte nested KWin ${W}x${H} (eigener Session-Bus)"
+echo "WSF-TEST: starte nested KWin --virtual (eigener Session-Bus)"
 exec dbus-run-session -- kwin_wayland \
   --virtual \
   --xwayland \
