@@ -1,0 +1,10 @@
+[Unit]
+Description=Workspaceflow täglicher Auto-Update-Check
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

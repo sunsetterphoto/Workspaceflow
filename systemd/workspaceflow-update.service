@@ -1,0 +1,8 @@
+[Unit]
+Description=Workspaceflow Auto-Update (git pull + reinstall)
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Schreibtisch/PublicGitHub/Workspaceflow
+ExecStart=/usr/bin/git pull --ff-only
+ExecStartPost=%h/Schreibtisch/PublicGitHub/Workspaceflow/install.sh
