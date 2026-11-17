@@ -18,7 +18,7 @@
 - **Reihenfolge:** neuer Space immer an Position 1 → `Desktop | NEU | App1 | …`.
 - **Auflösen** des Space bei *Wiederherstellen ODER Schließen*.
 - **Desktop-Index 0 ist permanent**, wird nie entfernt.
-- Git-Identität repo-lokal = `sunsetterphoto <sunsetterphoto@gmail.com>` (bereits gesetzt). Commits **nicht** als Niesau.
+- Git-Identität repo-lokal = `sunsetterphoto <37843523+sunsetterphoto@users.noreply.github.com>` (bereits gesetzt). Commits nur unter dieser Identität.
 - Exakte API-Namen stammen aus Task 1 (Live-Verifikation). Spätere Tasks verwenden die in `API-NOTES.md` bestätigten Namen; weichen sie vom hier angenommenen ab, gilt `API-NOTES.md`.
 
 ---
@@ -200,7 +200,7 @@ Test: nach Laden des Pakets muss `WSF: loaded v…` im Log stehen.
     "Id": "workspaceflow",
     "Name": "Workspaceflow",
     "Description": "macOS-artige dynamische Spaces: Maximieren erzeugt eine eigene Arbeitsfläche.",
-    "Authors": [{ "Name": "sunsetterphoto", "Email": "sunsetterphoto@gmail.com" }],
+    "Authors": [{ "Name": "sunsetterphoto", "Email": "37843523+sunsetterphoto@users.noreply.github.com" }],
     "Version": "0.1.0",
     "License": "MIT",
     "Category": "Window Management",
